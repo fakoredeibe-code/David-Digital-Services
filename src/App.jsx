@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 const ADMIN_PASSWORD = "Davido1"; 
-const SUPABASE_URL = "https://vfpwwunjfhyacsrdstfu.supabase.co";
+const SUPABASE_URL = "https://jhqicdypkajgvcqpgehb.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_gHQqVy9UHSUh3h_mJiIZMg_WojlEQUi";
 const SB_REST = `${SUPABASE_URL}/rest/v1`;
 const SB_AUTH = `${SUPABASE_URL}/auth/v1`;
