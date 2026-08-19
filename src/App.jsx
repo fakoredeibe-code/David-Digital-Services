@@ -5,12 +5,7 @@ import {
   Lock, Plus, Edit3, ChevronRight, Package, Clock, ShieldCheck
 } from "lucide-react";
 
-/* ---------------------------------------------------------
-   CONSTANTES
---------------------------------------------------------- */
-const ADMIN_PASSWORD = "David2026"; // ⚠️ à changer avant mise en ligne
-
-// Clé "publishable/anon" — conçue pour être utilisée côté client, ce n'est pas un secret.
+const ADMIN_PASSWORD = "Davido1"; 
 const SUPABASE_URL = "https://vfpwwunjfhyacsrdstfu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_gHQqVy9UHSUh3h_mJiIZMg_WojlEQUi";
 const SB_REST = `${SUPABASE_URL}/rest/v1`;
@@ -43,9 +38,9 @@ const DEFAULT_SERVICES = [
 ];
 
 const DEFAULT_SETTINGS = {
-  mobileMoneyNumber: "+225 07 00 00 00 00", // ⚠️ à remplacer par ton vrai numéro
-  mobileMoneyName: "David N.",
-  mobileMoneyProvider: "Orange Money / MTN Money / Wave",
+  mobileMoneyNumber: "+229 01 50 56 49 13", 
+  mobileMoneyName: "David Olaéwé FAKOREDE",
+  mobileMoneyProvider: "MTN Money",
 };
 
 const DEFAULT_REVIEWS = [
@@ -64,9 +59,6 @@ const genTrackingCode = () => {
 const formatFCFA = (n) => n.toLocaleString("fr-FR") + " FCFA";
 const formatDate = (ts) => new Date(ts).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 
-/* ---------------------------------------------------------
-   SUPABASE — REST (table) + AUTH
---------------------------------------------------------- */
 async function sbRest(path, options = {}) {
   const res = await fetch(`${SB_REST}/${path}`, {
     ...options,
@@ -115,7 +107,6 @@ async function sbSaveProfile(accessToken, row) {
   });
 }
 
-/* ---- mapping snake_case (base) <-> camelCase (app) ---- */
 const svcFromDb = (r) => ({ id: r.id, key: r.key, name: r.name, description: r.description, priceMin: r.price_min, priceMax: r.price_max, delay: r.delay, active: r.active });
 const svcToDb = (s) => ({ id: s.id, key: s.key, name: s.name, description: s.description, price_min: s.priceMin, price_max: s.priceMax, delay: s.delay, active: s.active });
 const orderFromDb = (r) => ({ id: r.id, trackingCode: r.tracking_code, userId: r.user_id, userName: r.user_name, serviceId: r.service_id, serviceName: r.service_name, priceMin: r.price_min, status: r.status, paymentRef: r.payment_ref, paymentPhone: r.payment_phone, createdAt: Date.parse(r.created_at) });
@@ -125,7 +116,6 @@ const reviewToDb = (r) => ({ id: r.id, user_name: r.userName, rating: r.rating, 
 const settingsFromDb = (r) => ({ mobileMoneyNumber: r.mobile_money_number, mobileMoneyName: r.mobile_money_name, mobileMoneyProvider: r.mobile_money_provider });
 const settingsToDb = (s) => ({ mobile_money_number: s.mobileMoneyNumber, mobile_money_name: s.mobileMoneyName, mobile_money_provider: s.mobileMoneyProvider });
 
-/* ---- session (seule donnée gardée hors base, juste le jeton local) ---- */
 async function loadPersonal(key, fallback) {
   try {
     const res = await window.storage.get(key, false);
@@ -142,9 +132,6 @@ async function savePersonal(key, value) {
   }
 }
 
-/* ---------------------------------------------------------
-   PETITS COMPOSANTS UI
---------------------------------------------------------- */
 function Stars({ value }) {
   return (
     <div style={{ display: "flex", gap: 2 }}>
@@ -212,9 +199,6 @@ function Nav({ view, setView, cartCount, currentUser, isAdmin }) {
   );
 }
 
-/* ---------------------------------------------------------
-   PAGE ACCUEIL
---------------------------------------------------------- */
 function HomePage({ services, reviews, setView }) {
   const approved = reviews.filter((r) => r.status === "approved");
   const avg = approved.length ? (approved.reduce((a, r) => a + r.rating, 0) / approved.length).toFixed(1) : null;
@@ -300,9 +284,6 @@ function HomePage({ services, reviews, setView }) {
   );
 }
 
-/* ---------------------------------------------------------
-   PAGE COMMANDE
---------------------------------------------------------- */
 function OrderPage({ services, currentUser, onOrder, setView, notice, setNotice }) {
   return (
     <section className="section">
@@ -343,10 +324,6 @@ function OrderPage({ services, currentUser, onOrder, setView, notice, setNotice 
     </section>
   );
 }
-
-/* ---------------------------------------------------------
-   PAGE PANIER
---------------------------------------------------------- */
 function CartPage({ orders, currentUser, onRemove, onPay, setView, settings }) {
   const myCart = orders.filter((o) => o.userId === currentUser?.id && o.status === "panier");
   const myPending = orders.filter((o) => o.userId === currentUser?.id && o.status !== "panier");
@@ -448,10 +425,6 @@ function CartPage({ orders, currentUser, onRemove, onPay, setView, settings }) {
     </section>
   );
 }
-
-/* ---------------------------------------------------------
-   PAGE COMPTE
---------------------------------------------------------- */
 function AccountPage({ currentUser, onLogin, onRegister, onLogout, orders }) {
   const [mode, setMode] = useState("login");
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
@@ -565,9 +538,6 @@ function AccountPage({ currentUser, onLogin, onRegister, onLogout, orders }) {
   );
 }
 
-/* ---------------------------------------------------------
-   PAGE ADMIN
---------------------------------------------------------- */
 function AdminPage({
   isAdmin, onAdminLogin,
   services, onAddService, onUpdateService, onDeleteService,
@@ -766,9 +736,6 @@ function AdminPage({
   );
 }
 
-/* ---------------------------------------------------------
-   APP PRINCIPALE
---------------------------------------------------------- */
 export default function App() {
   const [view, setView] = useState("home");
   const [services, setServices] = useState(DEFAULT_SERVICES);
@@ -818,7 +785,6 @@ export default function App() {
 
   const cartCount = currentUser ? orders.filter((o) => o.userId === currentUser.id && o.status === "panier").length : 0;
 
-  /* ---- Services (admin) ---- */
   const addService = async (s) => {
     setServices((prev) => [...prev, s]);
     try { await sbRest("services", { method: "POST", body: JSON.stringify([svcToDb(s)]) }); }
@@ -834,8 +800,6 @@ export default function App() {
     try { await sbRest(`services?id=eq.${id}`, { method: "DELETE", prefer: "return=minimal" }); }
     catch (e) { console.error(e); }
   };
-
-  /* ---- Commande ---- */
   const placeOrder = async (service) => {
     if (!currentUser) { setView("account"); return; }
     const order = {
@@ -982,9 +946,6 @@ export default function App() {
   );
 }
 
-/* ---------------------------------------------------------
-   STYLES GLOBAUX
---------------------------------------------------------- */
 function GlobalStyles() {
   return (
     <style>{`
